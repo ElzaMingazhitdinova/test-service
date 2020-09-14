@@ -15,26 +15,27 @@ public class TestBusinessLogicService {
         this.testServiceRepository = testServiceRepository;
     }
 
-    public PersonEntity processCreate(Person person){
+    public PersonEntity processCreate(Person person) {
         PersonEntity personEntity = new PersonEntity(person.getName());
         testServiceRepository.save(personEntity);
         return personEntity;
     }
 
-    public void PersonEntity processUpdate(String id){
-        testServiceRepository.get(UUID.fromString(id));
-        testServiceRepository.update(UUID.fromString(id));
-
+    public PersonEntity processUpdate(String id, Person person) {
+        PersonEntity personEntity = new PersonEntity(person.getName());
+        personEntity.setId(UUID.fromString(id));
+        return testServiceRepository.update(personEntity);
     }
 
-    public PersonEntity processGet(String id){
+    public PersonEntity processGet(String id) {
         return testServiceRepository.get(UUID.fromString(id));
     }
 
-    public List<PersonEntity> processGetAll(){
+    public List<PersonEntity> processGetAll() {
         return testServiceRepository.getAll();
     }
 
-    public void processDel(String id) {
-        testServiceRepository.del(UUID.fromString(id)); }
+    public void processDelete(String id) {
+        testServiceRepository.delete(UUID.fromString(id));
+    }
 }

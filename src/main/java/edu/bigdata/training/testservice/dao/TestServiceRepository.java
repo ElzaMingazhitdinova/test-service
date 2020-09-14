@@ -20,24 +20,24 @@ public class TestServiceRepository {
         this.personCacheConfiguration = personCacheConfiguration;
     }
 
-    public void save(PersonEntity personEntity){
+    public void save(PersonEntity personEntity) {
         ignite.getOrCreateCache(personCacheConfiguration).put(personEntity.getId(), personEntity);
     }
 
-    public PersonEntity get(UUID id){
+    public PersonEntity get(UUID id) {
         return ignite.getOrCreateCache(personCacheConfiguration).get(id);
     }
 
-    public void del(UUID id){
-         ignite.getOrCreateCache(personCacheConfiguration).remove(id);
+    public void delete(UUID id) {
+        ignite.getOrCreateCache(personCacheConfiguration).remove(id);
     }
 
-    public void update(UUID id,String name){
-        Iterable<Cache.Entry<UUID,PersonEntity>> iterable = () -> ignite.getOrCreateCache(personCacheConfiguration).iterator();
+    public PersonEntity update(PersonEntity personEntity) {
+        return ignite.getOrCreateCache(personCacheConfiguration).getAndReplace(personEntity.getId(), personEntity);
     }
 
-    public List<PersonEntity> getAll(){
-        Iterable<Cache.Entry<UUID,PersonEntity>> iterable = () -> ignite.getOrCreateCache(personCacheConfiguration).iterator();
+    public List<PersonEntity> getAll() {
+        Iterable<Cache.Entry<UUID, PersonEntity>> iterable = () -> ignite.getOrCreateCache(personCacheConfiguration).iterator();
 
         List<PersonEntity> persons = StreamSupport
                 .stream(iterable.spliterator(), false)
