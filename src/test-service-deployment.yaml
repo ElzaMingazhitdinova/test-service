@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-service
+spec:
+  selector:
+    matchLabels:
+      app: test-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: test-service
+    spec:
+      containers:
+        - name: test-service-container
+          image: "docker.io/mingazhitdinova/testservice:latest"
+          env:
+            - name: IP_FINDER_ADDRS
+              value: "0.0.0.0"
+          ports:
+            - name: http
+              containerPort: 8080
