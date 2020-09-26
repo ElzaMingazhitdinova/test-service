@@ -20,8 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.Map;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -56,7 +55,7 @@ public class TestServiceControllerTest {
     public void getAll_should_return_2_PersonEntities_when_2_personEntities_Exists() throws Exception {
         PersonEntity personEntity1 = entityUtils.createAndSavePersonEntity();
         PersonEntity personEntity2 = entityUtils.createAndSavePersonEntity();
-        String expectedJson = objectMapper.writeValueAsString(Arrays.asList(personEntity1,personEntity2));
+        String expectedJson = objectMapper.writeValueAsString(Arrays.asList(personEntity1, personEntity2));
 
         mvc.perform(get("/person/").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -75,9 +74,36 @@ public class TestServiceControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         Map<String, String> responseObject = objectMapper.readValue(response, Map.class);
-        Assert.assertEquals("name",responseObject.get("name"));
+        Assert.assertEquals("name", responseObject.get("name"));
 
         PersonEntity personEntity = entityUtils.getPersonEntity(responseObject.get("id"));
-        Assert.assertEquals("name",personEntity.getName());
+        Assert.assertEquals("name", personEntity.getName());
+    }
+
+    @Test
+    public void delete_should_return_no_PersonEntities_to_cache() throws Exception {
+        PersonEntity personEntity = entityUtils.createAndSavePersonEntity();
+        String id = personEntity.getId().toString();
+
+        mvc.perform(delete("/person/" + personEntity.getId()).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        Assert.assertNull(entityUtils.getPersonEntity(id));
+    }
+
+    @Test
+    public void update_should_return_new_PersonEntities_from_cache() throws Exception {
+        PersonEntity personEntity = entityUtils.createAndSavePersonEntity();
+        Person person = new Person("name");
+        String argJson = objectMapper.writeValueAsString(person);
+
+        String response = mvc.perform(put("/person/" + personEntity.getId()).accept(MediaType.APPLICATION_JSON)
+                .content(argJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        Map<String, String> responseObject = objectMapper.readValue(response, Map.class);
+        PersonEntity personEntity1 = entityUtils.getPersonEntity(responseObject.get("id"));
+        Assert.assertEquals("name", personEntity1.getName());
     }
 }

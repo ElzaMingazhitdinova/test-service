@@ -22,6 +22,7 @@ public class EntityUtils {
 
         return personEntity;
     }
+
     public PersonEntity getPersonEntity(String id) {
         return testServiceRepository.get(UUID.fromString(id));
     }

@@ -34,9 +34,7 @@ public class TestBusinessLogicServiceTest {
 
     @Test
     public void testCreate() {
-        //create
         Person person = new Person("test");
-
         PersonEntity personEntity = testBusinessLogicService.processCreate(person);
 
         Assert.assertEquals(person.getName(), personEntity.getName());
@@ -44,7 +42,7 @@ public class TestBusinessLogicServiceTest {
     }
 
     @Test
-    public void testGetAll(){
+    public void testGetAll() {
         List<PersonEntity> personEntityList = testBusinessLogicService.processGetAll();
         Assert.assertEquals("name1", personEntityList.get(0).getName());
         Assert.assertEquals("name2", personEntityList.get(1).getName());
@@ -52,10 +50,25 @@ public class TestBusinessLogicServiceTest {
     }
 
     @Test
-    public void testGet(){
+    public void testGet() {
         PersonEntity personEntity = testBusinessLogicService.processGet(UUID.randomUUID().toString());
         Assert.assertEquals("name", personEntity.getName());
         Mockito.verify(testServiceRepository, Mockito.times(1)).get(any());
+    }
+
+    @Test
+    public void testDelete() {
+        Mockito.verify(testServiceRepository, Mockito.times(1)).delete(any());
+    }
+
+    @Test
+    public void testUpdate() {
+        Person person = new Person("test");
+        Person person2 = new Person("new_test");
+        PersonEntity personEntity = testBusinessLogicService.processCreate(person);
+        PersonEntity personEntity1 = testBusinessLogicService.processUpdate(personEntity.getId().toString(), person2);
+        Assert.assertEquals("new_test", personEntity1.getName());
+        Mockito.verify(testServiceRepository, Mockito.times(1)).update(any());
     }
 
     @Configuration
@@ -66,12 +79,13 @@ public class TestBusinessLogicServiceTest {
             TestServiceRepository testServiceRepository = mock(TestServiceRepository.class);
             when(testServiceRepository.get(any())).thenReturn(new PersonEntity("name"));
             when(testServiceRepository.getAll())
-                    .thenReturn(Arrays.asList(new PersonEntity("name1"),new PersonEntity("name2")));
+                    .thenReturn(Arrays.asList(new PersonEntity("name1"), new PersonEntity("name2")));
+            when(testServiceRepository.update(any())).thenReturn(new PersonEntity("new_test"));
             return testServiceRepository;
         }
 
         @Bean
-        TestBusinessLogicService testBusinessLogicService(TestServiceRepository testServiceRepository){
+        TestBusinessLogicService testBusinessLogicService(TestServiceRepository testServiceRepository) {
             return new TestBusinessLogicService(testServiceRepository);
         }
     }
