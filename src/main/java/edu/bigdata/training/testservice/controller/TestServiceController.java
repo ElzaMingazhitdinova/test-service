@@ -6,7 +6,6 @@ import edu.bigdata.training.testservice.service.TestBusinessLogicService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,9 +38,9 @@ public class TestServiceController {
         return new ResponseEntity<>(personEntities, HttpStatus.OK);
     }
 
-    @PutMapping(path = {"/{id}"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = {"{id}"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PersonEntity> updatePerson(@PathVariable String id, @RequestBody Person person) {
-        PersonEntity personEntity = testBusinessLogicService.processUpdate(id,person);
+        PersonEntity personEntity = testBusinessLogicService.processUpdate(id, person);
         return new ResponseEntity<>(personEntity, HttpStatus.OK);
     }
 
