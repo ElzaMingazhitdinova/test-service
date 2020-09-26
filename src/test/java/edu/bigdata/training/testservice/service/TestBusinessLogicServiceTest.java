@@ -89,5 +89,4 @@ public class TestBusinessLogicServiceTest {
             return new TestBusinessLogicService(testServiceRepository);
         }
     }
-
 }
