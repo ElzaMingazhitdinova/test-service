@@ -58,15 +58,14 @@ public class TestBusinessLogicServiceTest {
 
     @Test
     public void testDelete() {
+        testServiceRepository.delete(UUID.randomUUID());
         Mockito.verify(testServiceRepository, Mockito.times(1)).delete(any());
     }
 
     @Test
     public void testUpdate() {
-        Person person = new Person("test");
-        Person person2 = new Person("new_test");
-        PersonEntity personEntity = testBusinessLogicService.processCreate(person);
-        PersonEntity personEntity1 = testBusinessLogicService.processUpdate(personEntity.getId().toString(), person2);
+        Person person = new Person("new_test");
+        PersonEntity personEntity1 = testBusinessLogicService.processUpdate(UUID.randomUUID().toString(), person);
         Assert.assertEquals("new_test", personEntity1.getName());
         Mockito.verify(testServiceRepository, Mockito.times(1)).update(any());
     }
