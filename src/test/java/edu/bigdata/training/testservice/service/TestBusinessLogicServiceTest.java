@@ -32,6 +32,9 @@ public class TestBusinessLogicServiceTest {
     @Autowired
     private TestServiceRepository testServiceRepository;
 
+    @Autowired
+
+
     @Test
     public void testCreate() {
         Person person = new Person("test");

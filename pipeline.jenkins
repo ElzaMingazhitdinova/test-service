@@ -1,0 +1,31 @@
+#!groovy
+properties([disableConcurrentBuilds()])
+
+pipeline {
+    agent {
+        label 'master'
+        }
+        tools {
+                maven 'maven-3'
+                jdk 'jdk-8'
+        }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
+        timestamps()
+    }
+    stages {
+        stage("Single step") {
+            steps {
+                withCredentials(
+                        [
+                            string(credentialsId: 'secret_repo', variable: 'REPO'),
+                            string(credentialsId: 'secret_username', variable: 'USERNAME'),
+                            string(credentialsId: 'secret_password', variable: 'PASSWORD'),
+                        ]
+                    ) {
+                        sh "./build.sh $REPO $USERNAME $PASSWORD"
+                    }
+            }
+        }
+    }
+}
