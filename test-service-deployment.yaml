@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-service
+spec:
+  selector:
+    matchLabels:
+      app: test-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: test-service
+    spec:
+      containers:
+        - name: test-service-container
+          image: "docker.io/mingazhitdinova/testservice:ssl"
+          imagePullPolicy: Always
+          env:
+            - name: SSL_KEYSTORE_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: testservicesecret
+                  key: keystore_password
+            - name: SSL_TRUSTSTORE_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: testservicesecret
+                  key: truststore_password
+          envFrom:
+            - configMapRef:
+                name: testservice-config
+          volumeMounts:
+            - mountPath: "/app/ssl"
+              name: ssl-volume
+              readOnly: true
+          ports:
+            - name: https
+              containerPort: 443
+      volumes:
+        - name: ssl-volume
+          secret:
+            secretName: testservicesecret
